@@ -1,4 +1,4 @@
-const app = require("express").Routes()
+const app = require("express").Router()
 const path = require('path')
 
 
