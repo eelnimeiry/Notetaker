@@ -1,27 +1,31 @@
-const app = require("express").Router()
+const router = require("express").Router()
 const fs = require("fs");
 let db = require("../db/db.json")
 
 
-app.get("/api/notes",function(req,res){
-    db = JSON.parse(fs.readFileSync(".db/db.json"))  ||  []
-    res.json(db)
+router.get("/notes",function(req,res){
+    fs.readFile('db/db.json', (err, data) => {
+        if (err) throw err;
+        res.json(JSON.parse(data));
+      })
 });
 //req.bod
 //req.param
 
-app.post("/api/notes",function(req,res){
+router.post("/notes",function(req,res){
 
     let newData = {
         title: req.body.title,
         text: req.body.text,
         id: Math.floor(Math.random()*1000289)
     }
-    db.push(newData)
-    fs.writeFileSync("./db/db.json",JSON.stringify(db),function(err){
-        if(err){throw err}
-    })
-    res.json(db)
+    fs.readFile('db/db.json', (err, data) => {
+        if (err) throw err;
+        const parseData= JSON.parse(data);
+        parseData.push(newData)
+        fs.writeFile("db/db.json",JSON.stringify(parseData),
+      err=>err ? console.log(err):res.redirect("/notes"))
+    
 })
-
-module.exports = app;
+})
+module.exports = router;
